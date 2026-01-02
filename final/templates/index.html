@@ -1,0 +1,14 @@
+{% extends templates/layout.html %}
+
+{% block body %}
+{% for post in posts %}
+<div>
+    <h3>{{ post.title }}</h3>
+    <p>{{ post.body }}</p>
+    <p>By {{ post.author.username }}</p>
+</div>
+{% empty %}
+<p>no posts yet</p>
+{% endfor %}
+
+{% endblock %}
