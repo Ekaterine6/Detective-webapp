@@ -17,8 +17,6 @@ def create_post(request):
             body=request.POST["body"],
             country=request.POST["country"],
             city=request.POST.get("city", ""),
-            latitude=request.POST["latitude"],
-            longitude=request.POST["longitude"],
             tags=request.POST.get("tags", "")
         )
         return redirect("index")

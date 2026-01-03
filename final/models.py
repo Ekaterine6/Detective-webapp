@@ -19,8 +19,6 @@ class Post(models.Model):
 
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100, blank=True)
-    latitude = models.FloatField()
-    longitude = models.FloatField()
     tags = models.CharField(max_length=255, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
