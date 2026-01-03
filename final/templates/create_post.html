@@ -1,16 +1,15 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<h1>write news</h1>
 
-<from method="post">
+<h1>Write your news</h1>
+<form method="post">
     {% csrf_token %}
     <input name="title" placeholder="title">
     <textarea name="body" placeholder="text"></textarea>
     <input name="country" placeholder="country">
     <input name="city" placeholder="city">
     <input name="tags" placeholder="tags">
-    <button type="submit">submit</button>
-</from>
-
+    <button type="submit">post</button>
+</form>
 {% endblock %}

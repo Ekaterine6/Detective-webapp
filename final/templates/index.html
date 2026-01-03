@@ -4,7 +4,10 @@
 {% for post in posts %}
 <div>
     <h3>{{ post.title }}</h3>
+    <p>{{ post.country }}</p>
+    <p>{{ post.city }}</p>
     <p>{{ post.body }}</p>
+    <p>{{ post.tags }}#</p>
     <p>By {{ post.author.username }}</p>
 </div>
 {% empty %}

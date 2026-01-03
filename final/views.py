@@ -11,6 +11,7 @@ def index(request):
 @login_required
 def create_post(request):
     if request.method == "POST":
+        print("post data:", request.POST)
         Post.objects.create(
             author=request.user,
             title=request.POST["title"],
@@ -23,4 +24,8 @@ def create_post(request):
     
     return render(request, "create_post.html")
 
+# The globe 
+@login_required
+def globe(request):
+    return render(request, "globe.html")
 
