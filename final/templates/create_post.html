@@ -1,4 +1,4 @@
-{% extends templates/layout.html %}
+{% extends "layout.html" %}
 
 {% block body %}
 <h1>write news</h1>
@@ -6,13 +6,13 @@
 <from method="post">
     {% csrf_token %}
     <input name="title" placeholder="title">
-    <textarea name="body"></textarea>
+    <textarea name="body" placeholder="text"></textarea>
     <input name="country" placeholder="country">
     <input name="city" placeholder="city">
     <input name="latitude" placeholder="latitude">
     <input name="longitude" placeholder="longitude">
     <input name="tags" placeholder="tags">
-    <button type="submit"></button>
+    <button type="submit">submit</button>
 </from>
 
 {% endblock %}
