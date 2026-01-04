@@ -1,13 +1,19 @@
 {% extends "layout.html" %}
 
 {% block body %}
+
+<h1>country data</h1>
+{% for item in country_data %}
+<li>{{ item.country }} - {{ item.count }}</li>
+{% endfor %}
+
 {% for post in posts %}
 <div>
     <h3>{{ post.title }}</h3>
-    <p>{{ post.country }}</p>
+    <p><a href="{% url 'country' post.country %}">{{ post.country }}</a></p>
     <p>{{ post.city }}</p>
     <p>{{ post.body }}</p>
-    <p>{{ post.tags }}#</p>
+    <p># {{ post.tags }}</p>
     <p>By {{ post.author.username }}</p>
 </div>
 {% empty %}
