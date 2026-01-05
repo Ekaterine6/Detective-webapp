@@ -1,0 +1,8 @@
+body {
+    background-color: rgb(64, 63, 63);
+    color:rgb(255, 255, 255);
+}
+
+h1 {
+    border: 3px solid black;
+}

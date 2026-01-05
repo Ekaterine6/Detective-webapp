@@ -2,6 +2,11 @@
 
 {% block body %}
 
+<!--search bar-->
+{% if query  %}
+<p>search result for "{{ query }}"</p>
+{% endif %}
+
 <h1>country data</h1>
 {% for item in country_data %}
 <li>{{ item.country }} - {{ item.count }}</li>
@@ -14,7 +19,7 @@
     <p>{{ post.city }}</p>
     <p>{{ post.body }}</p>
     <p># {{ post.tags }}</p>
-    <p>By {{ post.author.username }}</p>
+    <p><a href="{% url 'profile' post.author.username %}">By {{ post.author.username }}</a></p>
 </div>
 {% empty %}
 <p>no posts yet</p>

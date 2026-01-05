@@ -7,5 +7,6 @@ urlpatterns = [
     path("globe", views.globe, name="globe"),
     path("globe_data", views.globe_data, name="globe_data"),
     path("country/<str:country>", views.country, name="country"),
+    path("profile/<str:username>", views.profile, name="profile"),
 ]
  

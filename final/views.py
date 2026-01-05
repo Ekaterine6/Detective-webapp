@@ -1,11 +1,26 @@
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from .models import Post
 
 def index(request):
+    # search br 
+    query = request.GET.get("q", "").strip()
+
+    # posts display
     posts = Post.objects.all().order_by("-create_time")
+
+    # search bar logic - using Q making sure it is case insensetive
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) |
+            Q(body__icontains=query) |
+            Q(tags__icontains=query) |
+            Q(country__icontains=query) |
+            Q(city__icontains=query)
+        )
 
     country_data = (
         Post.objects
@@ -15,8 +30,10 @@ def index(request):
 
     return render(request, "index.html", {
         "posts": posts,
-        "country_data": country_data
+        "country_data": country_data,
+        "query" : query 
     })
+
 
 @login_required
 def create_post(request):
@@ -59,4 +76,16 @@ def country(request, country):
     return render(request, "index.html", {
         "posts": posts,
         "country_data": country_data
+    })
+
+
+@login_required
+def profile(request, username):
+    user = get_object_or_404(User, username=username)
+
+    posts = Post.objects.filter(author=user).order_by("-create_time")
+
+    return render(request, "profile.html", {
+        "profile_user": user,
+        "posts": posts
     })

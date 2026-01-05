@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<h2>{{ profile_user.username }}</h2>
+
+{% if profile_user.profile.bio %}
+<p>{{ profile_user.profile.bio }}</p>
+{% else %}
+<p>write your bio</p>
+{% endif %}
+
+<h3>Posts</h3>
+
+{% for post in posts %}
+<div>
+    <h4>{{ post.title }}</h4>
+    <p>{{ post.body }}</p>
+    <p>
+        <a href="{% url 'country' post.country %}">
+            {{ post.country }}
+        </a> - {{ post.city }}
+    </p>
+    <p># {{ post.tags }}</p>
+</div>
+{% empty %}
+<p>you have no posts</p>
+{% endfor %}
+
+{% endblock %}
