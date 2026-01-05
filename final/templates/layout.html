@@ -14,10 +14,18 @@
 
         <nav>
             <ul>
-                <li><a href="/globe">Globe</a></li>
-                <li><a href="/create">write news</a></li>
-                <li><a href="{% url 'profile' request.user.username %}">Profile</a></li>
-                <li><a href="/">Log out</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="/globe">Globe</a></li>
+                    <li><a href="/create">write news</a></li>
+                    <li><a href="{% url 'profile' request.user.username %}">Profile</a></li>
+                    <!--django logoutview was expecting post so i used form and method post -->
+                    <li><form action="{% url 'logout' %}" method="post">
+                        {% csrf_token %}
+                        <button>Log out</button></form></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Log in</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
             </ul>
         </nav>
 

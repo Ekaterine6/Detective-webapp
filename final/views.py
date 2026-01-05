@@ -1,9 +1,36 @@
 from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Post
+from .models import Post, Profile
+
+
+# register
+def register(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+        password = request.POST["password"]
+
+        if User.objects.filter(username=username).exists():
+            return render(request, "register.html", {
+                "error": "username already exists"
+            })
+        
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        login(request, user)
+        return redirect("index")
+    
+    return render(request, "register.html")
+
+
 
 def index(request):
     # search br 
@@ -83,9 +110,19 @@ def country(request, country):
 def profile(request, username):
     user = get_object_or_404(User, username=username)
 
+    # letting the user write their bio
+    # getting theri profile
+    profile, _ = Profile.objects.get_or_create(user=user)
+
+    if request.method == "POST" and request.user == user:
+        profile.bio = request.POST.get("bioo", "")
+        profile.save()
+        return redirect("profile", username=username)
+
     posts = Post.objects.filter(author=user).order_by("-create_time")
 
     return render(request, "profile.html", {
         "profile_user": user,
+        "profile": profile,
         "posts": posts
     })

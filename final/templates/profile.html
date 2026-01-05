@@ -4,12 +4,33 @@
 
 <h2>{{ profile_user.username }}</h2>
 
-{% if profile_user.profile.bio %}
-<p>{{ profile_user.profile.bio }}</p>
-{% else %}
-<p>write your bio</p>
+
+<!--hidden form to create or edit the bio-->
+{% if request.user == profile_user %}
+<form id="bio" method="post" style="display: none;">
+    {% csrf_token %}
+    <input name="bioo" placeholder="your bio.." value="{{ profile.bio }}">
+    <button type="submit">Save</button>
+</form>
 {% endif %}
 
+<!--for script later on for visibility-->
+{% if profile.bio %}
+    <p>Bio: {{ profile.bio }}</p>
+    {% if request.user == profile_user %}
+        <button id="edit-bio">Edit bio</button>
+    {% endif %}
+{% else %}
+    <p>no bio, you can add one</p>
+    {% if request.user == profile_user %}
+        <button id="add-bio">add bio</button>
+    {% endif %}
+{% endif %}
+
+<!--showing the join date-->
+<p>Joined in: {{ profile.create_time }}</p>
+
+<!--showing the posts from the user themselves-->
 <h3>Posts</h3>
 
 {% for post in posts %}
@@ -26,5 +47,21 @@
 {% empty %}
 <p>you have no posts</p>
 {% endfor %}
+
+<!--hiding the form showing it when the user presses the button to see it-->
+<script>
+    const add = document.getElementById('add-bio');
+    const edit = document.getElementById('edit-bio');
+    const form = document.getElementById('bio');
+
+    if (add) add.onclick = () => {
+        form.style.display = 'block';
+        add.style.display = 'none';
+    }
+    if (edit) edit.onclick = () => {
+        form.style.display = 'block';
+        edit.style.display = 'none';
+    }
+</script>
 
 {% endblock %}
