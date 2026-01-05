@@ -10,29 +10,44 @@
     </head>
 
     <body>
-        <h1><a href="/">Homepage</a></h1>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" href="/">Homepage</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto">
+    {% if user.is_authenticated %}
+      <li class="nav-item active">
+        <a class="nav-link" href="/globe">Globe</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="/create">Create</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'profile' request.user.username %}">Profile</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'logout' %}">Log out</a>
+      </li>
+      {% else %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'login' %}">Log in</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'register' %}">Register</a>
+      </li>
+    {% endif %}
+    </ul>
+    <form class="d-flex" action="{% url 'index' %}" method="get">
+        <input class="form-control me-2" name="q" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
 
-        <nav>
-            <ul>
-                {% if user.is_authenticated %}
-                    <li><a href="/globe">Globe</a></li>
-                    <li><a href="/create">write news</a></li>
-                    <li><a href="{% url 'profile' request.user.username %}">Profile</a></li>
-                    <!--django logoutview was expecting post so i used form and method post -->
-                    <li><form action="{% url 'logout' %}" method="post">
-                        {% csrf_token %}
-                        <button>Log out</button></form></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}">Log in</a></li>
-                    <li><a href="{% url 'register' %}">Register</a></li>
-                {% endif %}
-            </ul>
-        </nav>
+    
+  </div>
+</nav>
 
-        <form action="/" method="get">
-            <input type="text" name="q" placeholder="Type">
-            <button type="submit">Search</button>
-        </form>
 
     {% block body %}
     {% endblock %}
