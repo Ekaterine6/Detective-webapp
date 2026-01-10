@@ -37,9 +37,30 @@
         <button id="add-bio">add bio</button>
     {% endif %}
 
+    <!--cases displayed-->
+    <!-- used the same design i used on posts on cases-->
+    <h3 class="pr_h1" >Cases</h3>
+
+    {% if cases %}
+    {% for case in cases %}
+    <div class="card text-white bg-dark mb-3 w-75 mx-auto">
+    <div class="card-body">
+      <h5 class="card-title">{{ case.title }}</h5>
+      {% if case.is_public %}
+      <p class="card-text"><span style="color: #39ff14;">Public</span>
+      {% else %}
+      <span style="color:#ff1414">private</span>
+      {% endif %}</p>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="text-center">You have no cases</p>
+{% endif %}
+
 
 <!--showing the posts from the user themselves-->
-<h3>Posts</h3>
+<h3 class="pr_h1">Posts</h3>
 
 {% for post in posts %}
   <div class="card text-white bg-dark mb-3 w-75 mx-auto">

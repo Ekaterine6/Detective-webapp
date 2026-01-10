@@ -21,10 +21,10 @@
     <ul class="navbar-nav me-auto">
     {% if user.is_authenticated %}
       <li class="nav-item active">
-        <a class="nav-link" href="/">Globe</a>
+        <a class="nav-link" href="{% url 'create_case' %}">create case</a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="/create">Create</a>
+        <a class="nav-link" href="/create">Create post</a>
       </li>
       <li class="nav-item active">
         <a class="nav-link" href="{% url 'profile' request.user.username %}">Profile</a>

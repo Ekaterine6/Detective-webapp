@@ -117,10 +117,15 @@ def profile(request, username):
 
     posts = Post.objects.filter(author=user).order_by("-create_time")
 
+    # showing cases on profile page created by the user
+    cases = Case.objects.filter(author=user)
+
+
     return render(request, "profile.html", {
         "profile_user": user,
         "profile": profile,
-        "posts": posts
+        "posts": posts,
+        "cases": cases,
     })
 
 # view individual posts
