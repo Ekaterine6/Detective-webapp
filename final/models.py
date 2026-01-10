@@ -13,16 +13,19 @@ class Profile(models.Model):
     
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=150)
+    title = models.CharField(max_length=200)
     body = models.TextField()
-    media = models.FileField(upload_to="post_media/", blank=True, null=True)
 
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100, blank=True)
     tags = models.CharField(max_length=255, blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
+    event_date = models.DateField()
 
     def __str__(self):
         return self.title
     
-
+class PostImg(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to="post_images/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)

@@ -7,22 +7,31 @@
 <p>search result for "{{ query }}"</p>
 {% endif %}
 
-<h1>country data</h1>
-{% for item in country_data %}
-<li>{{ item.country }} - {{ item.count }}</li>
-{% endfor %}
+<h1 class="in_h1">country data</h1>
 
-{% for post in posts %}
-<div>
-    <h3>{{ post.title }}</h3>
-    <p><a href="{% url 'country' post.country %}">{{ post.country }}</a></p>
-    <p>{{ post.city }}</p>
-    <p>{{ post.body }}</p>
-    <p># {{ post.tags }}</p>
-    <p><a href="{% url 'profile' post.author.username %}">By {{ post.author.username }}</a></p>
+<div class="row g-4">
+  {% for post in posts %}
+  <div class="col-md-4">
+    <div class="card h-100" style="background-color:#212020; color:#ddeadb;">
+      {% if post.images.exists %}
+        <img src="{{ post.images.first.image.url }}" class="card-img-top" alt="Post image">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text text-truncate" style="max-height:3em;">{{ post.body }}</p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'country' post.country %}">{{ post.country }}</a></small>
+        <br>
+        <a href="{% url 'view_post' post.id %}" class="btn btn-outline-success btn-sm mt-2">Read More</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <p>No posts yet</p>
+  {% endfor %}
 </div>
-{% empty %}
-<p>no posts yet</p>
-{% endfor %}
+
+
 
 {% endblock %}

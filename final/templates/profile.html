@@ -2,7 +2,7 @@
 
 {% block body %}
 
-<h2>{{ profile_user.username }}</h2>
+<h2 class="pr_h1">User {{ profile_user.username }}</h2>
 
 
 <!--hidden form to create or edit the bio-->
@@ -14,39 +14,48 @@
 </form>
 {% endif %}
 
-<!--for script later on for visibility-->
-{% if profile.bio %}
-    <p>Bio: {{ profile.bio }}</p>
+
+<!--profile information card -- from bootstrao witgh my own code mixed-->
+<div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+  <div class="card-header">Your information</div>
+  <div class="card-body">
+    {% if profile.bio %}
+    <h5 class="card-title">Bio: {{ profile.bio }}</h5>
+    {% endif %}
+<!--showing the join date-->
+    <p class="card-text">Joined in: {{ profile.create_time }}</p>
+  </div>
+</div>
+
+<!--edit or add button dependin on if u have text in your bio or not -->
     {% if request.user == profile_user %}
+    {% if profile.bio %}
         <button id="edit-bio">Edit bio</button>
     {% endif %}
-{% else %}
+    {% else %}
     <p>no bio, you can add one</p>
-    {% if request.user == profile_user %}
         <button id="add-bio">add bio</button>
     {% endif %}
-{% endif %}
 
-<!--showing the join date-->
-<p>Joined in: {{ profile.create_time }}</p>
 
 <!--showing the posts from the user themselves-->
 <h3>Posts</h3>
 
 {% for post in posts %}
-<div>
-    <h4>{{ post.title }}</h4>
-    <p>{{ post.body }}</p>
-    <p>
-        <a href="{% url 'country' post.country %}">
-            {{ post.country }}
-        </a> - {{ post.city }}
-    </p>
-    <p># {{ post.tags }}</p>
-</div>
+  <div class="card text-white bg-dark mb-3 w-75 mx-auto">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <p class="card-text">{{ post.body }}</p>
+      <p class="card-text">
+        <a href="{% url 'country' post.country %}" class="text-success">{{ post.country }}</a> - {{ post.city }}
+      </p>
+      <p class="card-text">#{{ post.tags }}</p>
+    </div>
+  </div>
 {% empty %}
-<p>you have no posts</p>
+  <p class="text-center">You have no posts</p>
 {% endfor %}
+
 
 <!--hiding the form showing it when the user presses the button to see it-->
 <script>

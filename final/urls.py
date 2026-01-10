@@ -1,5 +1,6 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
+from django.shortcuts import render
 from . import views
 
 urlpatterns = [
@@ -9,9 +10,8 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     
     path("create", views.create_post, name="create_post"),
-    path("globe", views.globe, name="globe"),
-    path("globe_data", views.globe_data, name="globe_data"),
     path("country/<str:country>", views.country, name="country"),
+    path("post/<int:post_id>", views.view_post, name="view_post"),
     path("profile/<str:username>", views.profile, name="profile"),
 ]
  
