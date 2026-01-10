@@ -17,6 +17,7 @@
     <p class="card-text">date: {{ post.event_date }}</p>
     <h5 class="card-text">{{ post.body }}</h5>
     <p class="card-text"><small class="text-muted">Tags: #{{ post.tags }}</small></p>
+    <a class="case_btn" href="{% url 'add_to_case' post.id %}">Add to your case</a>
   </div>
 </div>
 {% endblock %}

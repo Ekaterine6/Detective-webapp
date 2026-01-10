@@ -45,7 +45,7 @@
     {% for case in cases %}
     <div class="card text-white bg-dark mb-3 w-75 mx-auto">
     <div class="card-body">
-      <h5 class="card-title">{{ case.title }}</h5>
+      <h5 class="card-title"><a href="{% url 'case_detail' case.id %}" class="text-success">{{ case.title }}</a></h5>
       {% if case.is_public %}
       <p class="card-text"><span style="color: #39ff14;">Public</span>
       {% else %}

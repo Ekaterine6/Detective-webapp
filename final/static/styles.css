@@ -61,7 +61,7 @@ body {
     margin-bottom: 30px;
 }
 
-.formm button {
+.formm button, .case_btn {
     align-self: center;
     background-color: #111;
     width: 40%;

@@ -159,7 +159,7 @@ def create_case(request):
     return render(request, "create_case.html")
 
 
-# like view post this is for cases users can click and see the full information/full case adn comment on it 
+# like (view post) this is for cases users can click and see the full information/full case adn comment on it 
 @login_required
 def case_details(request, case_id):
     case=get_object_or_404(Case, id=case_id)
@@ -171,4 +171,25 @@ def case_details(request, case_id):
     return render(request, "case_details.html", {
         "case":case,
         "evidence_posts": evidence_posts
+    })
+
+
+# letting users add posts to their "cases" as "evidence"
+@login_required
+def add_to_case(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user_cases = Case.objects.filter(author=request.user)
+
+    if request.method == "POST":
+        case_id = request.POST.get("case_id")
+        case = get_object_or_404(Case, id=case_id)
+
+        #adding posts to cases
+        from .models import CaseEvidence
+        CaseEvidence.objects.create(case=case, post=post)
+
+        return redirect("case_detail", case_id=case.id)
+    return render(request, "add_to_case.html", {
+        "post":post,
+        "user_cases":user_cases
     })
