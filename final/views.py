@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Post, Profile, PostImg
+from .models import Post, Profile, PostImg, Case
 
 
 # register
@@ -130,3 +130,23 @@ def view_post(request, post_id):
     return render(request, "view_post.html", {
         "post": post
     })
+
+
+# letting the user create a case making them feel like they are sharing their tehories with people
+@login_required
+def create_case(request):
+    if request.method == "POST":
+        title = request.POST.get("title")
+        notes = request.POST.get("notes")
+        is_public = request.POST.get("is_public") == "on"
+
+        Case.objects.create(
+            author=request.user,
+            title=title,
+            notes=notes,
+            is_public=is_public
+        )
+
+        return redirect("profile", request.user.username)
+    
+    return render(request, "create_case.html")

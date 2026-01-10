@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.conf import settings
 
 
 class Profile(models.Model):
@@ -25,7 +26,28 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+
 class PostImg(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="post_images/")
     uploaded_at = models.DateTimeField(auto_now_add=True)
+
+
+
+class Case(models.Model):
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cases")
+    title = models.CharField(max_length=200)
+    notes = models.TextField(blank=True)
+    is_public = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+    
+class CaseEvidence(models.Model):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="evidence")
+    post = models.ForeignKey("Post", on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.post.title} -> {self.case.title}"

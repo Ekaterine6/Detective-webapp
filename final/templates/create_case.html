@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form class="formm" method="post">
+    {% csrf_token %}
+    <h1 class="gl_h1"> Creating a case? </h1>
+
+    <label for="title">case name</label>
+    <input type="text" required name="title" id="title" placeholder="title">
+  
+    <label for="body">Write the full info:</label>
+    <textarea id="body" rows="10" required name="notes" placeholder="start typing"></textarea>
+
+    <label for="public">make this case public?</label>
+    <input type="checkbox" name="is_public" id="public" checked>
+  <br>
+  <label for="submit">You sure you wanna share?</label>
+  <br>
+  <button type="submit" id="submit">Create Case</button>
+</form>
+{% endblock %}

@@ -10,6 +10,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     
     path("create", views.create_post, name="create_post"),
+    path("cases/create/", views.create_case, name="create_case"),
     path("country/<str:country>", views.country, name="country"),
     path("post/<int:post_id>", views.view_post, name="view_post"),
     path("profile/<str:username>", views.profile, name="profile"),
