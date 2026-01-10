@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1 class="gl_h1">{{ case.title }} </h1>
+
+<!--bootstrap card with my own changes and code-->
+<div class="card mb-3"  style="background-color:#212020; color:#ddeadb;">
+  <div class="card-body">
+    {% if case.is_public %}
+      <p class="card-text"><span style="color: #39ff14;">Public</span>
+      {% else %}
+      <span style="color:#ff1414">private</span>
+    {% endif %}</p></p>
+    
+    <p class="card-text">By: {{ case.author.username }}</p>
+    <p class="card-text">{{ case.notes|linebreaks }}</p>
+  </div>
+</div>
+
+<!--showing the post that is attached to this case and letting the users go to that post to view it better as well -->
+<h3 class="gl_h1">posts as evidence </h3>
+{% if evidence_posts %}
+{% for ev in evidence_posts %}
+<div class="card text-white bg-dark mb-3 w-75 mx-auto">
+    <div class="card-body">
+        <h4 class="card-title">{{ ev.post.title }}</h4>
+        <p class="card-text">{{ ev.post.body|truncatechars:100 }}</p>
+        <p clas="card-text">by: {{ ev.post.author.username }} in {{ ev.post.country }} specifically in {{ ev.post.city }}</p>
+        <a href="{% url 'view_post' ev.post.id %}" class="btn btn-outline-success">view post</a>
+    </div>
+</div>
+{% endfor %}
+{% else %}
+<p>no posts added to this case yet </p>
+{% endif %}
+
+{% endblock %}
+
+
+

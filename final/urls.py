@@ -14,5 +14,6 @@ urlpatterns = [
     path("country/<str:country>", views.country, name="country"),
     path("post/<int:post_id>", views.view_post, name="view_post"),
     path("profile/<str:username>", views.profile, name="profile"),
+    path("cases/<int:case_id>/", views.case_details, name="case_details"),
 ]
  

@@ -128,6 +128,7 @@ def profile(request, username):
         "cases": cases,
     })
 
+
 # view individual posts
 @login_required
 def view_post(request, post_id):
@@ -143,6 +144,7 @@ def create_case(request):
     if request.method == "POST":
         title = request.POST.get("title")
         notes = request.POST.get("notes")
+        #they can have this case private so only they see it or public so others can see their "case"
         is_public = request.POST.get("is_public") == "on"
 
         Case.objects.create(
@@ -155,3 +157,18 @@ def create_case(request):
         return redirect("profile", request.user.username)
     
     return render(request, "create_case.html")
+
+
+# like view post this is for cases users can click and see the full information/full case adn comment on it 
+@login_required
+def case_details(request, case_id):
+    case=get_object_or_404(Case, id=case_id)
+
+    # users can add "posts" to their "cases" as evidence
+    evidence_posts = case.evidence.all().select_related('post')
+
+    #comments on the  cases
+    return render(request, "case_details.html", {
+        "case":case,
+        "evidence_posts": evidence_posts
+    })
