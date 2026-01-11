@@ -12,6 +12,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
     
+
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -26,6 +27,7 @@ class Post(models.Model):
     def __str__(self):
         return self.title
     
+
 
 class PostImg(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
@@ -44,6 +46,8 @@ class Case(models.Model):
     def __str__(self):
         return self.title
     
+
+
 class CaseEvidence(models.Model):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="evidence")
     post = models.ForeignKey("Post", on_delete=models.CASCADE)
@@ -51,3 +55,4 @@ class CaseEvidence(models.Model):
     
     def __str__(self):
         return f"{self.post.title} -> {self.case.title}"
+

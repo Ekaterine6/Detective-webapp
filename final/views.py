@@ -165,7 +165,7 @@ def case_details(request, case_id):
     case=get_object_or_404(Case, id=case_id)
 
     # users can add "posts" to their "cases" as evidence
-    evidence_posts = case.evidence.all().select_related('post')
+    evidence_posts = case.evidence.all().select_related('post', 'post__author')
 
     #comments on the  cases
     return render(request, "case_details.html", {

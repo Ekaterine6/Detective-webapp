@@ -2,14 +2,16 @@ body {
     background: #101010;
     color: #e6ffe6;
     letter-spacing: 0.4px;
+    font-family: monospace;
 }
 
 /* i wanted the other titles different from create_pots.html */
-.gl_h1, .pr_h1, .in_h1, .re_h1, .lo_h1 {
+.gl_h1 {
     color: #ddeadb;
     margin-bottom: 25px;
     padding-bottom: 10px;
     box-shadow: 0 0 15px rgba(57, 255, 20, 0.7);
+    font-family: cursive;
 }
 
 .formm {
