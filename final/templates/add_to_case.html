@@ -18,12 +18,12 @@
 
 <!--if the user has no cases they can create it from here as well-->
 <h4>create a case if you dont have one</h4>
-<form method="post" action="{% url 'create_case' %}">
+<form method="post" class="formm" action="{% url 'create_case' %}">
     {% csrf_token %}
     <input type="text" required name="title" placeholder="title">
     <textarea id="body" required name="notes" placeholder="start typing"></textarea>
     <label for="public">make this case public?</label>
-    <input type="checkbox" name="is_public" id="public" checked >
+    <input type="checkbox"  name="is_public" id="public" checked >
   <br>
   <button type="submit" class="case_btn">Create Case</button>
 </form>

@@ -130,7 +130,7 @@ def profile(request, username):
 
 
 # view individual posts
-@login_required
+
 def view_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, "view_post.html", {

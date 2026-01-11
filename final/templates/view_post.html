@@ -5,9 +5,40 @@
 
 <!--bootstrap card with my own changes and code-->
 <div class="card mb-3"  style="background-color:#212020; color:#ddeadb;">
-    {% for img in post.images.all %}
-    <img src="{{ img.image.url }}" class="post-card-img" alt="no image">
-    {% endfor %}
+  <!--bootstrap carousel-->
+  {% if post.images.all %}
+    <div class="post-image-wrapper">
+    <div id="carouselExampleControls{{ post.id }}" class="carousel slide" data-bs-ride="carousel">
+
+    <div class="carousel-inner">
+      {% for img in post.images.all %}
+      <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <img src="{{ img.image.url }}" class="d-block w-100 post-carousel-img" alt="post image">
+      </div>
+      {% endfor %}
+    </div>
+
+    {% if post.images.count > 1 %}
+    <button class="carousel-control-prev" type="button"
+          data-bs-target="#carouselExampleControls{{ post.id }}"
+          data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+    </button>
+
+    <button class="carousel-control-next" type="button"
+          data-bs-target="#carouselExampleControls{{ post.id }}"
+          data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+    </button>
+  {% endif %}
+
+</div>
+</div>
+{% endif %}
+
+
+
+
   <div class="card-body">
     <h3 class="card-title">{{ post.title }}</h3>
     <br>
@@ -17,7 +48,9 @@
     <p class="card-text">date: {{ post.event_date }}</p>
     <h5 class="card-text">{{ post.body }}</h5>
     <p class="card-text"><small class="text-muted">Tags: #{{ post.tags }}</small></p>
+    {% if user.is_authenticated %}
     <a class="case_btn" href="{% url 'add_to_case' post.id %}">Add to your case</a>
+    {% endif %}
   </div>
 </div>
 {% endblock %}
