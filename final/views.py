@@ -49,15 +49,9 @@ def index(request):
             Q(city__icontains=query)
         )
 
-    country_data = (
-        Post.objects
-        .values("country")
-        .annotate(count=Count("id"))
-    )
 
     return render(request, "index.html", {
         "posts": posts,
-        "country_data": country_data,
         "query" : query 
     })
 
@@ -85,21 +79,15 @@ def create_post(request):
 
 
 
+
 def country(request, country):
     # filtering post by the selected country 
     posts = Post.objects.filter(country=country).order_by("-create_time")
 
-    # i want the small globe to be on every page so will paste this code couple of times
-    country_data = (
-        Post.objects
-        .values("country")
-        .annotate(count=Count("id"))
-    )
-
     return render(request, "index.html", {
         "posts": posts,
-        "country_data": country_data
     })
+
 
 
 @login_required
@@ -129,13 +117,14 @@ def profile(request, username):
     })
 
 
-# view individual posts
 
+# view individual posts
 def view_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, "view_post.html", {
         "post": post
     })
+
 
 
 # letting the user create a case making them feel like they are sharing their tehories with people

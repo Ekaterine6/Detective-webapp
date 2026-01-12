@@ -1,25 +1,23 @@
 {% extends "layout.html" %}
 
 {% block body %}
-<h1 class="gl_h1">add "{{ post.title }}" to a case </h1>
+<h1 class="gl_h1">adding "{{ post.title|truncatewords:4 }}" to a case </h1>
 <!--users add posts to their cases -->
 <form method="post">
     {% csrf_token %}
     <label>Select a case</label>
-        <select name="case_id">
+        <select name="case_id" required>
             {% for case in user_cases %}
             <option value="{{ case.id }}">{{ case.title }}</option>
             {% endfor %}
         </select>
 
-    
-
     <button type="submit" class="btn btn-outline-success">add to case</button>
 </form>
 
-
+<br>
 <!--if the user has no cases they can create it from here as well-->
-<h4>create a case if you dont have one</h4>
+<h4 style="text-align: center;">create a case if you dont have one</h4>
 <form method="post" class="formm" action="{% url 'create_case' %}">
     {% csrf_token %}
     <input type="text" required name="title" placeholder="title">
