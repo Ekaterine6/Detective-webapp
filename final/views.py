@@ -1,10 +1,10 @@
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Post, Profile, PostImg, Case, Comments, CaseEvidence
+from .models import Post, Profile, PostImg, Case, Comments
 
 
 # register
@@ -163,6 +163,15 @@ def create_case(request):
 @login_required
 def case_details(request, case_id):
     case=get_object_or_404(Case, id=case_id)
+
+    # private logic / if private only author can see
+    if not case.is_public and case.author != request.user:
+        return HttpResponse("""
+            <script>
+                alert('this case is private');
+                window.location.href = '/';    
+            </script>
+        """)
 
     # users can add "posts" to their "cases" as evidence
     evidence_posts = case.evidence.all().select_related('post', 'post__author')
