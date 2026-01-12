@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block body %}
-
+<br>
 <h2 class="gl_h1">User {{ profile_user.username }}</h2>
 
 
@@ -30,16 +30,18 @@
 <!--edit or add button dependin on if u have text in your bio or not -->
     {% if request.user == profile_user %}
     {% if profile.bio %}
-        <button id="edit-bio">Edit bio</button>
-    {% endif %}
+        <button id="edit-bio" class="case_btn" style="width: 120px;">Edit bio</button> <br>
+    
     {% else %}
     <p>no bio, you can add one</p>
-        <button id="add-bio">add bio</button>
+        <button id="add-bio" class="case_btn" style="width: 120px;">add bio</button> <br>
+    {% endif %}
     {% endif %}
 
     <!--cases displayed-->
     <!-- used the same design i used on posts on cases-->
-    <h3 class="pr_h1" >Cases</h3>
+     <br>
+    <h3 class="gl_h1" >Cases</h3>
 
     {% if cases %}
     {% for case in cases %}
@@ -60,7 +62,7 @@
 
 
 <!--showing the posts from the user themselves-->
-<h3 class="pr_h1">Posts</h3>
+<h3 class="gl_h1">Posts</h3>
 
 {% for post in posts %}
   <div class="card text-white bg-dark mb-3 w-75 mx-auto">

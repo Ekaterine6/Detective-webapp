@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Post, Profile, PostImg, Case
+from .models import Post, Profile, PostImg, Case, Comments, CaseEvidence
 
 
 # register
@@ -167,10 +167,29 @@ def case_details(request, case_id):
     # users can add "posts" to their "cases" as evidence
     evidence_posts = case.evidence.all().select_related('post', 'post__author')
 
-    #comments on the  cases
+    #comments
+    # letting users comment on cases and reply to each other 
+    if request.method == "POST":
+        body = request.POST.get("comment_body")
+        parent_id = request.POST.get("parent_id")
+        parent_comment = None
+        if parent_id:
+            parent_comment = Comments.objects.filter(id=parent_id).first()
+
+        Comments.objects.create(
+            case=case,
+            author=request.user,
+            body=body,
+            parent=parent_comment
+        )
+        return redirect("case_detail", case_id=case.id)
+    
+    comments = case.comments.filter(parent=None).order_by("-created_at")
+
     return render(request, "case_details.html", {
         "case":case,
-        "evidence_posts": evidence_posts
+        "evidence_posts": evidence_posts,
+        "comments": comments
     })
 
 
@@ -193,3 +212,5 @@ def add_to_case(request, post_id):
         "post":post,
         "user_cases":user_cases
     })
+
+

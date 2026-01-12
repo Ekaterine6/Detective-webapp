@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 
 
+# user profiles
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     pro_pic = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
@@ -13,6 +14,7 @@ class Profile(models.Model):
         return self.user.username
     
 
+# posts/news
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -28,7 +30,7 @@ class Post(models.Model):
         return self.title
     
 
-
+# pictures
 class PostImg(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="images")
     image = models.ImageField(upload_to="post_images/")
@@ -36,6 +38,7 @@ class PostImg(models.Model):
 
 
 
+# creating "cases"
 class Case(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="cases")
     title = models.CharField(max_length=200)
@@ -47,7 +50,8 @@ class Case(models.Model):
         return self.title
     
 
-
+# case "evidence"
+# adding posts to cases
 class CaseEvidence(models.Model):
     case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="evidence")
     post = models.ForeignKey("Post", on_delete=models.CASCADE)
@@ -56,3 +60,14 @@ class CaseEvidence(models.Model):
     def __str__(self):
         return f"{self.post.title} -> {self.case.title}"
 
+
+# comments
+class Comments(models.Model):
+    case = models.ForeignKey(Case, on_delete=models.CASCADE, related_name="comments")
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    body = models.TextField()
+    parent = models.ForeignKey("self", null=True, blank=True, on_delete=models.CASCADE, related_name="replies")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.author.username} on {self.case.title}"

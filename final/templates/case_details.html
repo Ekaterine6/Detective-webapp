@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-
+{% load humanize %}
 {% block body %}
 <h1 class="gl_h1"># {{ case.title }} </h1>
 
@@ -13,7 +13,8 @@
     {% endif %}</p>
     
     <p class="card-text"># By:  {{ case.author.username }}</p>
-    <p class="card-text"># Case: {{ case.notes|linebreaks }}</p>
+    <p class="card-text"># Case: {{ case.notes }}</p>
+    <h4><a href="#comments_section" style="text-decoration: none; color: #ddeadb; text-shadow: 0 0 5px #39ff14;">comment</a></h4>
   </div>
 </div>
 
@@ -35,6 +36,75 @@
 {% empty %}
 <p>no evidence added yet</p>
 {% endfor %}
+
+
+<!--comments-->
+{% if user.is_authenticated %}
+<form class="formm" method="post">
+  {% csrf_token %}
+
+  <!--lettting the user know they are replying-->
+  <p id="replying" style="display: none;">
+    # replying to <strong id="reply-user"></strong>
+    <a href="#" id="cancel-rpl" style="margin-left: 10px; text-decoration: none; color: #ff1414;">cancel</a>
+  </p>
+
+  <!--coms form-->
+  <h4>Have anything to add on?</h4>
+  <br>
+  <textarea name="comment_body" id="comment_body" placeholder="say what you know" required></textarea>
+  <input type="hidden" id="parent_id" name="parent_id" value="">
+  <button type="submit">Comment</button>
+</form>
+{% else %}
+<p>Log in to comment</p>
+{% endif %}
+
+<!--displaying comments-->
+<div class="comments_section" id="comments_section">
+  <h3 class="gl_h1">Coms</h3>
+  {% for comment in comments %}
+  <div class="comment">
+    <p><strong>{{ comment.author.username }}</strong> • {{ comment.created_at|naturaltime }}</p>
+    <p>{{ comment.body }}</p>
+    {% if user.is_authenticated %}
+    <a href="#comment_body" class="reply-btn" data-comment-id="{{ comment.id }}" data-username="{{ comment.author.username }}">Reply</a>
+    {% endif %}
+
+    {% for reply in comment.replies.all %}
+    <div class="reply" style="margin-left: 20px;">
+      <!--i wante dthose 2 mins ago 1 hr ago so i am using naturaltime-->
+      <p>{{ reply.author.username }} * {{ reply.created_at|naturaltime }}</p>
+      <p>{{ reply.body }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% empty %}
+  <p>no comments yet</p>
+  {% endfor %}
+</div>
+
+
+<script>
+document.querySelectorAll(".reply-btn").forEach(btn => {
+  btn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    const parentId = this.dataset.commentId;
+    document.getElementById("parent_id").value = parentId;
+    document.getElementById("comment_body").focus();
+    document.getElementById("reply-user").innerText = this.dataset.username;
+    document.getElementById("replying").style.display = "block";
+  });
+});
+
+document.getElementById("cancel-rpl").addEventListener("click", function (e) {
+  e.preventDefault();
+
+  document.getElementById("parent_id").value = "";
+  document.getElementById("replying").style.display = "none";
+});
+</script>
 
 {% endblock %}
 
