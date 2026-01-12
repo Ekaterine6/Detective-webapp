@@ -71,3 +71,16 @@ class Comments(models.Model):
 
     def __str__(self):
         return f"{self.author.username} on {self.case.title}"
+
+
+# notes for the board
+class Notes(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes")
+    title = models.CharField(max_length=100)
+    text = models.TextField(blank=True)
+    top = models.IntegerField(default=100)
+    left = models.IntegerField(default=200)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.user.username})"

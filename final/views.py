@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
-from .models import Post, Profile, PostImg, Case, Comments
+from .models import Post, Profile, PostImg, Case, Comments, Notes
 
 
 # register
@@ -210,5 +210,24 @@ def add_to_case(request, post_id):
         "post":post,
         "user_cases":user_cases
     })
+
+#notes logic
+@login_required
+def board(request):
+    if request.method == "POST":
+        title = request.POST.get("noteTitle")
+        text = request.POST.get("noteText")
+        if title:
+            Notes.objects.create(
+                user=request.user, 
+                title=title, 
+                text=text
+                )
+        return redirect("board")
+    notes = Notes.objects.filter(user=request.user).order_by("created_at")
+    return render(request, "board.html", {
+        "notes":notes
+    })
+        
 
 

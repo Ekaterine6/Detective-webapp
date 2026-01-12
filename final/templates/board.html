@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1 class="gl_h1">Detective Board</h1>
+<!--using div as a board-->
+<div class="board">
+    {% for note in notes %}
+    <div class="note">
+        <h5>{{ note.title }}</h5>
+        <p>{{ note.text }}</p>
+        <button id="btn" class="delete-btn">delete</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!--usin a div for notes as well-->
+
+
+<!--new notes-->
+<form method="post" class="formm">
+    {% csrf_token %}
+    <input type="text" name="noteTitle" placeholder="title" required>
+    <input type="text" name="noteText" placeholder="info">
+    <button class="case_btn" type="submit">add note</button>
+
+<script>
+    function enableDrag(note){
+        note.onmousedown = function(e) {
+            let shiftX = e.clientX - note.getBoundingClientRect().left;
+            let shiftY = e.clientY - note.getBoundingClientRect().top;
+
+            function moveAt(e) {
+                note.style.left = e.clientX - shiftX + 'px';
+                note.style.top = e.clientY - shiftY + 'px';
+            }
+
+            document.addEventListener('mousemove', moveAt);
+
+            document.onmouseup = function() {
+                document.removeEventListener('mousemove', moveAt);
+                document.onmouseup = null;
+            };
+        };
+        note.ondragstart = () => false;
+    }
+
+    // delte button
+    function enableDelete(note){
+        const btn = note.querySelector('.delete-btn');
+        if(btn){
+            btn.addEventListener('click', () => note.remove());
+        }
+    }
+    //initializing exsiting notes
+
+    document.querySelectorAll('.note').forEach(note => {
+        enableDrag(note);
+        enableDelete(note);
+    });
+</script>
+{% endblock %}

@@ -1,6 +1,5 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
-from django.shortcuts import render
 from . import views
 
 urlpatterns = [
@@ -16,5 +15,6 @@ urlpatterns = [
     path("profile/<str:username>", views.profile, name="profile"),
     path("cases/<int:case_id>/", views.case_details, name="case_detail"),
     path("post/<int:post_id>/add_to_case/", views.add_to_case, name="add_to_case"),
+    path("board/", views.board, name="board"),
 ]
  
