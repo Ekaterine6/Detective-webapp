@@ -80,6 +80,7 @@ class Notes(models.Model):
     text = models.TextField(blank=True)
     top = models.IntegerField(default=100)
     left = models.IntegerField(default=200)
+    note_type = models.CharField(max_length=20, default="clue")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

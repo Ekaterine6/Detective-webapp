@@ -195,5 +195,44 @@ body {
     background: #2c2c2c;
     color: #fff;
     border-radius: 6px;
-    
+}
+
+.clue {
+    background-color: yellow;
+    color: #000;
+    box-shadow: 0 0 15px #e1e86a;
+}
+
+.evidence {
+    background-color: #86d04d;
+    box-shadow: 0 0 15px #bcf590;
+    color: #000;
+}
+
+.suspect {
+    background-color: #c37e7e;
+    box-shadow: 0 0 15px #da6060;
+    color: #000;
+}
+
+.idea {
+    background-color: #add8e6;
+    box-shadow: 0 0 15px #67aee3;
+    color: #000;
+}
+
+#btn_b {
+    align-self: center;
+    background-color: #111;
+    width: 30%;
+    color: #c7d1bf;
+    padding: 6px;
+    cursor: pointer;
+    box-shadow: 0 0 8px #181717;
+}
+
+#btn_b:hover {
+    background-color: #ff1414;
+    color: #000;
+    box-shadow: 0 0 15px #e46b6b;
 }

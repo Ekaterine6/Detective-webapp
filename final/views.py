@@ -5,6 +5,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Post, Profile, PostImg, Case, Comments, Notes
+import json
 
 
 # register
@@ -215,16 +216,31 @@ def add_to_case(request, post_id):
 @login_required
 def board(request):
     if request.method == "POST":
+        # saving the position
+        positions = request.POST.get("positions")
+        if positions:
+            data= json.loads(positions)
+            for item in data:
+                note = Notes.objects.get(id=item["id"], user=request.user)
+                note.top = item["top"]
+                note.left = item["left"]
+                note.save()
+            return redirect("board")
+        
+        # adding notes to board
         title = request.POST.get("noteTitle")
-        text = request.POST.get("noteText")
+        text = request.POST.get("noteText", "")
+        note_type = request.POST.get("noteType", "clue")
         if title:
             Notes.objects.create(
-                user=request.user, 
-                title=title, 
-                text=text
-                )
-        return redirect("board")
-    notes = Notes.objects.filter(user=request.user).order_by("created_at")
+                user=request.user,
+                title=title,
+                text=text,
+                note_type=note_type
+            )
+            return redirect("board")
+        
+    notes = Notes.objects.filter(user=request.user)
     return render(request, "board.html", {
         "notes":notes
     })
