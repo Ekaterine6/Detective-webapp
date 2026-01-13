@@ -229,5 +229,10 @@ def board(request):
         "notes":notes
     })
         
-
+# deleting notes from board
+@login_required
+def delete_note(request, note_id):
+    note = get_object_or_404(Notes, id=note_id, user=request.user)
+    note.delete()
+    return HttpResponse("deleted")
 

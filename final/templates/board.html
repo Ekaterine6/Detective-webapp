@@ -5,10 +5,10 @@
 <!--using div as a board-->
 <div class="board">
     {% for note in notes %}
-    <div class="note">
+    <div class="note" data-id="{{ note.id }}">
         <h5>{{ note.title }}</h5>
         <p>{{ note.text }}</p>
-        <button id="btn" class="delete-btn">delete</button>
+        <button class="delete-btn">delete</button>
     </div>
     {% endfor %}
 </div>
@@ -19,6 +19,8 @@
 <!--new notes-->
 <form method="post" class="formm">
     {% csrf_token %}
+    <h3>Add a note</h3>
+    <br>
     <input type="text" name="noteTitle" placeholder="title" required>
     <input type="text" name="noteText" placeholder="info">
     <button class="case_btn" type="submit">add note</button>
@@ -44,11 +46,21 @@
         note.ondragstart = () => false;
     }
 
-    // delte button
+    // delte button calling django from js 
+    // before this i was just using js to delete adn it was just deleting the html not from database
     function enableDelete(note){
         const btn = note.querySelector('.delete-btn');
         if(btn){
-            btn.addEventListener('click', () => note.remove());
+            btn.addEventListener('click', () => {
+                const noteId = note.dataset.id;
+
+                fetch(`/delete-note/${noteId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                }).then(() => {
+                    note.remove();
+                });
+            });
         }
     }
     //initializing exsiting notes
