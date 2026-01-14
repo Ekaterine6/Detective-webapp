@@ -10,20 +10,30 @@ import json
 
 # register
 def register(request):
+    #registration form
     if request.method == "POST":
         username = request.POST["username"]
         email = request.POST["email"]
         password = request.POST["password"]
-
+ 
+        # no repeating of usernames
         if User.objects.filter(username=username).exists():
             return render(request, "register.html", {
                 "error": "username already exists"
             })
         
+        # creating the user
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password
+        )
+
+        # note the new user sees in board only once 
+        Notes.objects.create(
+            user=user,
+            title="Example Note - Hi Detective",
+            text="You can create and add notes to this board,use it to brainstorm, or maybe u just want to visualize your thoughts."
         )
 
         login(request, user)
