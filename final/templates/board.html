@@ -46,64 +46,96 @@
 
 
 <script>
-    function enableDrag(note){
-        note.onmousedown = function(e) {
-            let shiftX = e.clientX - note.getBoundingClientRect().left;
-            let shiftY = e.clientY - note.getBoundingClientRect().top;
+function enableDrag(note){
+    // Desktop dragging
+    note.onmousedown = startDrag;
+    note.ondragstart = () => false;
 
-            function moveAt(e) {
-                note.style.left = e.clientX - shiftX + 'px';
-                note.style.top = e.clientY - shiftY + 'px';
+    // Mobile dragging
+    note.addEventListener('touchstart', startDrag, {passive: false});
+
+    function startDrag(e) {
+        e.preventDefault(); // prevent scrolling while dragging
+
+        let clientX = e.clientX;
+        let clientY = e.clientY;
+
+        // Touch events
+        if(e.type === "touchstart") {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        }
+
+        let shiftX = clientX - note.getBoundingClientRect().left;
+        let shiftY = clientY - note.getBoundingClientRect().top;
+
+        function moveAt(e) {
+            let moveX = e.clientX;
+            let moveY = e.clientY;
+
+            if(e.type === "touchmove") {
+                moveX = e.touches[0].clientX;
+                moveY = e.touches[0].clientY;
             }
 
-            document.addEventListener('mousemove', moveAt);
+            note.style.left = moveX - shiftX + 'px';
+            note.style.top = moveY - shiftY + 'px';
+        }
 
+        // Desktop or mobile
+        if(e.type === "mousedown") {
+            document.addEventListener('mousemove', moveAt);
             document.onmouseup = function() {
                 document.removeEventListener('mousemove', moveAt);
                 document.onmouseup = null;
             };
-        };
-        note.ondragstart = () => false;
-    }
-
-    // saving the note positions
-    document.getElementById("form").onsubmit = function() {
-        let data = [];
-        document.querySelectorAll(".note").forEach(note => {
-            data.push({
-                id: note.dataset.id,
-                top: parseInt(note.style.top),
-                left: parseInt(note.style.left)
-            });
-        });
-        document.getElementById("positions").value = JSON.stringify(data);
-    };
-
-
-    // delte button calling django from js 
-    // before this i was just using js to delete adn it was just deleting the html not from database
-    function enableDelete(note){
-        const btn = note.querySelector('.delete-btn');
-        if(btn){
-            btn.addEventListener('click', () => {
-                const noteId = note.dataset.id;
-
-                fetch(`/delete-note/${noteId}/`, {
-                    method: "POST",
-                    headers: { "X-CSRFToken": "{{ csrf_token }}" }
-                }).then(() => {
-                    note.remove();
-                });
+        } else { // touch
+            document.addEventListener('touchmove', moveAt, {passive: false});
+            document.addEventListener('touchend', function endTouch() {
+                document.removeEventListener('touchmove', moveAt);
+                document.removeEventListener('touchend', endTouch);
             });
         }
     }
+}
 
-    //initializing exsiting notes
-    document.querySelectorAll('.note').forEach(note => {
-        note.style.top = note.dataset.top + "px";
-        note.style.left = note.dataset.left + "px";
-        enableDrag(note);
-        enableDelete(note);
+// saving the note positions
+document.getElementById("form").onsubmit = function() {
+    let data = [];
+    document.querySelectorAll(".note").forEach(note => {
+        data.push({
+            id: note.dataset.id,
+            top: parseInt(note.style.top),
+            left: parseInt(note.style.left)
+        });
     });
+    document.getElementById("positions").value = JSON.stringify(data);
+};
+
+// delete button
+function enableDelete(note){
+    const btn = note.querySelector('.delete-btn');
+    if(btn){
+        btn.addEventListener('click', () => {
+            const noteId = note.dataset.id;
+
+            fetch(`/delete-note/${noteId}/`, {
+                method: "POST",
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            }).then(() => {
+                note.remove();
+            });
+        });
+    }
+}
+
+// initialize existing notes
+document.querySelectorAll('.note').forEach(note => {
+    note.style.top = note.dataset.top + "px";
+    note.style.left = note.dataset.left + "px";
+    enableDrag(note);
+    enableDelete(note);
+});
 </script>
+
 {% endblock %}
