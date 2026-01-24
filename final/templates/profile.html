@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<br>
+<h2 class="gl_h1">User {{ profile_user.username }}</h2>
+
+
+<!--hidden form to create or edit the bio-->
+{% if request.user == profile_user %}
+<form id="bio" method="post" style="display: none;">
+    {% csrf_token %}
+    <input name="bioo" placeholder="your bio.." value="{{ profile.bio }}">
+    <button type="submit">Save</button>
+</form>
+{% endif %}
+
+
+<!--profile information card -- from bootstrao witgh my own code mixed-->
+<div class="card text-white bg-dark mb-3" style="max-width: 18rem;">
+  <div class="card-header">User information</div>
+  <div class="card-body">
+    {% if profile.bio %}
+    <h5 class="card-title" style="color: rgb(134, 201, 182);">Bio: {{ profile.bio }}</h5>
+    {% endif %}
+<!--showing the join date-->
+    <small><p class="card-text">Joined in: {{ profile.create_time }}</p></small>
+  </div>
+</div>
+
+<!--edit or add button dependin on if u have text in your bio or not -->
+    {% if request.user == profile_user %}
+    {% if profile.bio %}
+        <button id="edit-bio" class="case_btn" style="width: 120px;">Edit bio</button> <br>
+    
+    {% else %}
+    <p>no bio, you can add one</p>
+        <button id="add-bio" class="case_btn" style="width: 120px;">add bio</button> <br>
+    {% endif %}
+    {% endif %}
+
+    <!--cases displayed-->
+    <!-- used the same design i used on posts on cases-->
+     <br>
+    <h3 class="gl_h1" style="text-align: center;">Cases</h3>
+
+    {% if cases %}
+    {% for case in cases %}
+    <div class="card text-white bg-dark mb-3 w-75 mx-auto">
+    <div class="card-body">
+      <h5 class="card-title"><a href="{% url 'case_detail' case.id %}" class="text-success">{{ case.title }}</a></h5>
+      {% if case.is_public %}
+      <p class="card-text"><span style="color: #39ff14;">Public</span>
+      {% else %}
+      <span style="color:#ff1414">private</span>
+      {% endif %}</p>
+    </div>
+  </div>
+  {% endfor %}
+{% else %}
+  <p class="text-center">You have no cases</p>
+{% endif %}
+
+
+<!--showing the posts from the user themselves-->
+<h3 class="gl_h1" style="text-align: center;">Posts</h3>
+
+<div class="row g-4">
+  {% for post in posts %}
+  <div class="col-md-4">
+    <div class="card h-100" style="background-color:#212020; color:#ddeadb;">
+      {% if post.images.exists %}
+        <img src="{{ post.images.first.image.url }}" class="card-img-top" alt="Post image">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text text-truncate" style="max-height:3em;">{{ post.body }}</p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'country' post.country %}">{{ post.country }}</a></small>
+        <br>
+        <a href="{% url 'view_post' post.id %}" class="btn btn-outline-success btn-sm mt-2">Read More</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <p>No posts yet</p>
+  {% endfor %}
+</div>
+
+
+<!--hiding the form showing it when the user presses the button to see it-->
+<script>
+    const add = document.getElementById('add-bio');
+    const edit = document.getElementById('edit-bio');
+    const form = document.getElementById('bio');
+
+    if (add) add.onclick = () => {
+        form.style.display = 'block';
+        add.style.display = 'none';
+    }
+    if (edit) edit.onclick = () => {
+        form.style.display = 'block';
+        edit.style.display = 'none';
+    }
+</script>
+
+{% endblock %}

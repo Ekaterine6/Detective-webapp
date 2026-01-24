@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2 class="gl_h1">Login</h2>
+
+<form method="post">
+{% csrf_token %}
+  <!--same bootstrap design as register-->
+<div class="form-group" id="reform">
+    <label for="usr">Username</label>
+    <input name="username" required type="text" class="form-control w-50" id="usr" placeholder="Username">
+  </div>
+  <br>
+  <div class="form-group" id="reform">
+    <label for="pas">Password</label>
+    <input required name="password" type="password" class="form-control w-50" id="pas" placeholder="password">
+  </div>
+  <br>
+  <button type="submit" class="btn btn-outline-success">Login</button>
+</form>
+
+{% if error %}
+<div role="alert" class="alert alert-danger">{{ error }}</div>
+{% endif %}
+
+{% endblock %}

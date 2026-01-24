@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form class="formm" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h1> You know something? </h1>
+
+    <label for="title">What?</label>
+    <input type="text" required name="title" id="title" placeholder="title">
+
+    <label for="date">When?</label>
+    <input type="date" required name="event_date" id="date">  
+
+    <label for="country">Which country is this news from?</label>
+    <input type="text" required name="country" id="country" placeholder="Country">
+    
+    <label for="City">Where specificaly?</label>
+    <input type="text" required name="city" id="City" placeholder="City">       
+   
+    <label for="Zip">Tags</label>
+    <input type="text" required name="tags" id="Zip">
+  
+    <label for="body">Write the full info:</label>
+    <textarea id="body" required name="body" placeholder="start typing"></textarea>
+
+    <label for="evidence">Show the evidence</label>
+    <p>you can select multiple</p>
+    <input type="file" required name="images" id="evidence" accept="image/*" multiple>
+  <br>
+  <label for="submit">You sure you wanna share?</label>
+  <br>
+  <button type="submit" id="submit">Publish</button>
+</form>
+{% endblock %}

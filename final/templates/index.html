@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<!--search bar-->
+{% if query  %}
+<br>
+<div class="alert alert-primary" role="alert">
+  <strong>results for "{{ query }}"</strong> 
+</div>
+<br>
+{% endif %}
+
+<h1 class="gl_h1">country data</h1>
+
+<div class="row g-4">
+  {% for post in posts %}
+  <div class="col-md-4">
+    <div class="card h-100" style="background-color:#212020; color:#ddeadb;">
+      {% if post.images.exists %}
+        <img src="{{ post.images.first.image.url }}" class="card-img-top" alt="Post image">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ post.title }}</h5>
+        <p class="card-text text-truncate" style="max-height:3em;">{{ post.body }}</p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'country' post.country %}">{{ post.country }}</a></small>
+        <br>
+        <a href="{% url 'view_post' post.id %}" class="btn btn-outline-success btn-sm mt-2">Read More</a>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+    <p>No posts yet</p>
+  {% endfor %}
+</div>
+
+
+
+{% endblock %}

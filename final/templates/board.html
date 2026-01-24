@@ -1,0 +1,109 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<h1 class="gl_h1">Detective Board</h1>
+
+<!--saving positions of the notes using hidden form-->
+<form method="post" id="form">
+    {% csrf_token %}
+    <input type="hidden" name="positions" id="positions">
+    <button class="case_btn">Save note position</button>
+</form>
+
+
+<!--using div as a board-->
+<div class="board">
+    {% for note in notes %}
+    <div class="note {{ note.note_type }}" data-id="{{ note.id }}" 
+    data-top="{{ note.top|default:100 }}"
+    data-left="{{ note.left|default:100 }}">
+        <h5>{{ note.title }}</h5>
+        <p>{{ note.text }}</p>
+        <button class="delete-btn" id="btn_b">delete</button>
+    </div>
+    {% endfor %}
+</div>
+
+<!--usin a div for notes as well-->
+
+
+<!--new notes-->
+<form method="post" class="formm">
+    {% csrf_token %}
+    <h3>Add a note</h3>
+    <br>
+    <input type="text" name="noteTitle" placeholder="title" required>
+    <input type="text" name="noteText" placeholder="info">
+    <!--coloring the notes-->
+    <select name="noteType">
+        <option value="clue">clue</option>
+        <option value="idea">idea</option>
+        <option value="evidence">evidence</option>
+        <option value="suspect">suspect</option>
+    </select>
+    <button class="case_btn" type="submit">add note</button>
+</form>
+
+
+<script>
+    function enableDrag(note){
+        note.onmousedown = function(e) {
+            let shiftX = e.clientX - note.getBoundingClientRect().left;
+            let shiftY = e.clientY - note.getBoundingClientRect().top;
+
+            function moveAt(e) {
+                note.style.left = e.clientX - shiftX + 'px';
+                note.style.top = e.clientY - shiftY + 'px';
+            }
+
+            document.addEventListener('mousemove', moveAt);
+
+            document.onmouseup = function() {
+                document.removeEventListener('mousemove', moveAt);
+                document.onmouseup = null;
+            };
+        };
+        note.ondragstart = () => false;
+    }
+
+    // saving the note positions
+    document.getElementById("form").onsubmit = function() {
+        let data = [];
+        document.querySelectorAll(".note").forEach(note => {
+            data.push({
+                id: note.dataset.id,
+                top: parseInt(note.style.top),
+                left: parseInt(note.style.left)
+            });
+        });
+        document.getElementById("positions").value = JSON.stringify(data);
+    };
+
+
+    // delte button calling django from js 
+    // before this i was just using js to delete adn it was just deleting the html not from database
+    function enableDelete(note){
+        const btn = note.querySelector('.delete-btn');
+        if(btn){
+            btn.addEventListener('click', () => {
+                const noteId = note.dataset.id;
+
+                fetch(`/delete-note/${noteId}/`, {
+                    method: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" }
+                }).then(() => {
+                    note.remove();
+                });
+            });
+        }
+    }
+
+    //initializing exsiting notes
+    document.querySelectorAll('.note').forEach(note => {
+        note.style.top = note.dataset.top + "px";
+        note.style.left = note.dataset.left + "px";
+        enableDrag(note);
+        enableDelete(note);
+    });
+</script>
+{% endblock %}
