@@ -143,7 +143,7 @@ LOGOUT_REDIRECT_URL = "/login/"
 LOGIN_URL = "/login/"
 
 
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = "True"
 
 
 # SECURITY SETTINGS 
