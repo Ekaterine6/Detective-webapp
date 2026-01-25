@@ -111,6 +111,14 @@
   </div>
 </div>
 
+{% if request.user == profile_user %}
+<hr>
+<a href="{% url 'delete_account' %}" style="color:#ff4d4d;">
+  Delete my account
+</a>
+{% endif %}
+
+
 <!-- Bio toggle script -->
 <script>
 const add = document.getElementById('add-bio');

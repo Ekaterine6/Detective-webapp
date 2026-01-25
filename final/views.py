@@ -1,4 +1,6 @@
 from django.db.models import Count, Q
+from django.contrib.auth import logout
+from django.views.decorators.http import require_POST
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -40,6 +42,23 @@ def register(request):
         return redirect("index")
     
     return render(request, "register.html")
+
+
+# delete accout logic
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+
+        # log out first (VERY important)
+        logout(request)
+
+        # delete the user (everything linked via CASCADE is deleted)
+        user.delete()
+
+        return redirect("index")  # or "login" if you prefer
+
+    return render(request, "confirm_delete_account.html")
 
 
 

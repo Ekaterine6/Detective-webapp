@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<br>
+<div class="card bg-dark text-white w-75 mx-auto">
+  <div class="card-body text-center">
+    <h3 style="color:#ff4d4d;">Delete Account</h3>
+    <p>
+      This action is <strong>permanent</strong>.<br>
+      All your posts, cases, notes, and profile data will be deleted.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" class="case_btn" style="background:#ff4d4d;">
+        Yes, delete my account
+      </button>
+      <br><br>
+      <a href="{% url 'profile' request.user.username %}" class="text-success">
+        Cancel
+      </a>
+    </form>
+  </div>
+</div>
+{% endblock %}
