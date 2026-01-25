@@ -1,5 +1,5 @@
 from django.db.models import Count, Q
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -225,19 +225,32 @@ def add_to_case(request, post_id):
 #notes logic
 @login_required
 def board(request):
+    # --- Instant adding via JS fetch ---
+    if request.method == "POST" and request.headers.get("Content-Type") == "application/json":
+        data = json.loads(request.body)
+        note = Notes.objects.create(
+            user=request.user,
+            title=data.get("noteTitle"),
+            text=data.get("noteText", ""),
+            note_type=data.get("noteType", "clue"),
+            top=100,
+            left=100
+        )
+        return JsonResponse({"success": True, "id": note.id})
+
+    # --- Saving positions via hidden form ---
     if request.method == "POST":
-        # saving the position
         positions = request.POST.get("positions")
         if positions:
-            data= json.loads(positions)
+            data = json.loads(positions)
             for item in data:
                 note = Notes.objects.get(id=item["id"], user=request.user)
                 note.top = item["top"]
                 note.left = item["left"]
                 note.save()
             return redirect("board")
-        
-        # adding notes to board
+
+        # --- Adding notes via normal form submit ---
         title = request.POST.get("noteTitle")
         text = request.POST.get("noteText", "")
         note_type = request.POST.get("noteType", "clue")
@@ -249,12 +262,10 @@ def board(request):
                 note_type=note_type
             )
             return redirect("board")
-        
+
     notes = Notes.objects.filter(user=request.user)
-    return render(request, "board.html", {
-        "notes":notes
-    })
-        
+    return render(request, "board.html", {"notes": notes})
+
 # deleting notes from board
 @login_required
 def delete_note(request, note_id):
@@ -262,3 +273,47 @@ def delete_note(request, note_id):
     note.delete()
     return HttpResponse("deleted")
 
+
+# letting the auhor delete their own post
+@login_required
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    if post.author != request.user:
+        return HttpResponse("You are not allowed to delete this post", status=403)
+    
+    if request.method == "POST":
+        post.delete()
+        return redirect("index")
+    
+    # optional: show a confirmation page
+    return render(request, "confirm_delete_post.html", {"post": post})
+
+
+
+# letting the user edit their post
+@login_required
+def edit_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    
+    # only author can edit
+    if post.author != request.user:
+        return HttpResponse("You are not allowed to edit this post", status=403)
+
+    if request.method == "POST":
+        post.title = request.POST.get("title")
+        post.body = request.POST.get("body")
+        post.event_date = request.POST.get("event_date")
+        post.country = request.POST.get("country")
+        post.city = request.POST.get("city", "")
+        post.tags = request.POST.get("tags", "")
+        post.save()
+
+        # handle images if needed
+        images = request.FILES.getlist("images")
+        for img in images:
+            PostImg.objects.create(post=post, image=img)
+
+        return redirect("view_post", post_id=post.id)
+
+    return render(request, "edit_post.html", {"post": post})

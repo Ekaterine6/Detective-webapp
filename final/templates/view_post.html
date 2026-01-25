@@ -47,11 +47,21 @@
     <p class="card-text">specifically in: {{ post.city }}</p>
     <p class="card-text">date: {{ post.event_date }}</p>
     <h5 class="card-text">{{ post.body }}</h5>
-    <p class="card-text"><small class="text-muted">Tags: #{{ post.tags }}</small></p>
+    <p class="card-text" style="color: aquamarine;"><small>Tags: #{{ post.tags }}</small></p>
     {% if user.is_authenticated %}
     <a class="case_btn" href="{% url 'add_to_case' post.id %}">Add to your case</a>
     {% endif %}
   </div>
+  {% if user.is_authenticated and user == post.author %}
+    <div class="mt-3">
+        <a href="{% url 'edit_post' post.id %}" class="btn btn-outline-warning btn-sm">Edit</a>
+        <form method="post" action="{% url 'delete_post' post.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+        </form>
+    </div>
+{% endif %}
+
 </div>
 {% endblock %}
 

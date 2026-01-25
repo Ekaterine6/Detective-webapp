@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<form class="formm" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h1>Edit Your Post</h1>
+
+    <label for="title">What?</label>
+    <input type="text" required name="title" id="title" placeholder="title" value="{{ post.title }}">
+
+    <label for="date">When?</label>
+    <input type="date" required name="event_date" id="date" value="{{ post.event_date|date:'Y-m-d' }}">  
+
+    <label for="country">Which country is this news from?</label>
+    <input type="text" required name="country" id="country" placeholder="Country" value="{{ post.country }}">
+    
+    <label for="City">Where specifically?</label>
+    <input type="text" required name="city" id="City" placeholder="City" value="{{ post.city }}">       
+   
+    <label for="Zip">Tags</label>
+    <input type="text" required name="tags" id="Zip" value="{{ post.tags }}">
+  
+    <label for="body">Write the full info:</label>
+    <textarea id="body" required name="body" placeholder="start typing">{{ post.body }}</textarea>
+
+    <label for="evidence">Show the evidence</label>
+    <p>you can select multiple</p>
+    <input type="file" name="images" id="evidence" accept="image/*" multiple>
+    
+    <br>
+    <label for="submit">Ready to update?</label>
+    <br>
+    <button type="submit" id="submit">Update Post</button>
+</form>
+
+{% endblock %}

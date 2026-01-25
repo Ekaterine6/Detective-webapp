@@ -17,4 +17,8 @@ urlpatterns = [
     path("post/<int:post_id>/add_to_case/", views.add_to_case, name="add_to_case"),
     path("board/", views.board, name="board"),
     path("delete-note/<int:note_id>/", views.delete_note, name="delete_note"),
+    path("post/<int:post_id>/edit/", views.edit_post, name="edit_post"),
+    path("post/<int:post_id>/delete/", views.delete_post, name="delete_post"),
+    path("post/<int:post_id>/", views.view_post, name="view_post"),
+
 ]

@@ -44,6 +44,152 @@
     <button class="case_btn" type="submit">add note</button>
 </form>
 
+<script>
+// --- CSRF Helper ---
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        document.cookie.split(';').forEach(cookie => {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            }
+        });
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// --- Dragging ---
+function enableDrag(note) {
+    note.addEventListener('mousedown', startDrag);
+    note.addEventListener('touchstart', startDrag, {passive:false});
+    note.ondragstart = () => false;
+
+    function startDrag(e) {
+        e.preventDefault();
+        note.style.zIndex = 1000;
+
+        const clientX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+
+        const shiftX = clientX - note.getBoundingClientRect().left;
+        const shiftY = clientY - note.getBoundingClientRect().top;
+
+        function moveAt(e) {
+            const moveX = e.type.includes("touch") ? e.touches[0].clientX : e.clientX;
+            const moveY = e.type.includes("touch") ? e.touches[0].clientY : e.clientY;
+            note.style.left = (moveX - shiftX) + 'px';
+            note.style.top = (moveY - shiftY) + 'px';
+        }
+
+        if (e.type === "mousedown") {
+            document.addEventListener('mousemove', moveAt);
+            document.onmouseup = () => {
+                document.removeEventListener('mousemove', moveAt);
+                document.onmouseup = null;
+            };
+        } else {
+            document.addEventListener('touchmove', moveAt, {passive:false});
+            document.addEventListener('touchend', function endTouch() {
+                document.removeEventListener('touchmove', moveAt);
+                document.removeEventListener('touchend', endTouch);
+            });
+        }
+    }
+}
+
+// --- Delete Notes ---
+function enableDelete(note){
+    const btn = note.querySelector('.delete-btn');
+    if(btn){
+        btn.addEventListener('click', () => {
+            const noteId = note.dataset.id;
+            fetch(`/delete-note/${noteId}/`, {
+                method: "POST",
+                headers: {"X-CSRFToken": csrftoken},
+            })
+            .then(res => {
+                if(res.ok) note.remove();
+                else alert("Error deleting note");
+            });
+        });
+    }
+}
+
+// --- Initialize Existing Notes ---
+document.querySelectorAll('.note').forEach(note => {
+    note.style.top = parseInt(note.dataset.top) + "px";
+    note.style.left = parseInt(note.dataset.left) + "px";
+    enableDrag(note);
+    enableDelete(note);
+});
+
+// --- Save Positions ---
+document.getElementById("form").onsubmit = function(){
+    const data = [];
+    document.querySelectorAll('.note').forEach(note => {
+        data.push({
+            id: note.dataset.id,
+            top: parseInt(note.style.top),
+            left: parseInt(note.style.left)
+        });
+    });
+    document.getElementById("positions").value = JSON.stringify(data);
+};
+
+// --- Instant Add Notes ---
+document.querySelector('.formm').onsubmit = function(e){
+    e.preventDefault(); // prevent page reload
+    const title = this.noteTitle.value;
+    const text = this.noteText.value;
+    const type = this.noteType.value;
+
+    // Send to backend
+    fetch('', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify({
+            noteTitle: title,
+            noteText: text,
+            noteType: type
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            // Create new note element
+            const newNote = document.createElement('div');
+            newNote.className = 'note ' + type;
+            newNote.dataset.id = data.id;
+            newNote.dataset.top = 100;
+            newNote.dataset.left = 100;
+            newNote.style.top = "100px";
+            newNote.style.left = "100px";
+
+            newNote.innerHTML = `
+                <h5>${title}</h5>
+                <p>${text}</p>
+                <button class="delete-btn" id="btn_b">delete</button>
+            `;
+
+            document.querySelector('.board').appendChild(newNote);
+            enableDrag(newNote);
+            enableDelete(newNote);
+
+            // Reset form
+            this.reset();
+        } else {
+            alert("Error adding note");
+        }
+    });
+};
+</script>
+
+
 
 
 {% endblock %}
