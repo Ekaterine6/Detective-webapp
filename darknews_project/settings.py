@@ -21,17 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key-for-local-only")
 
 
 ALLOWED_HOSTS = [
-    ".onrender.com",  # keep for Render
-    "yourdomain.com", # replace with your Namecheap domain
+    ".onrender.com",  # keeping for Render
+    "caseboard.online", #  Namecheap domain
 ]
 
 
@@ -144,6 +142,8 @@ LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 LOGIN_URL = "/login/"
 
+
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 
 # SECURITY SETTINGS 
