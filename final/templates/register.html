@@ -3,39 +3,37 @@
 
 <h2 class="gl_h1">Register</h2>
 
-<form method="post">
-{% csrf_token %}
-  <div class="form-group" id="reform">
-    <label for="usr">Username</label>
-    <input name="username" required type="text" class="form-control w-50" id="usr" placeholder="Username">
-  </div>
-  <br>
-  <div class="form-group" id="reform">
-    <label for="em">Email</label>
-    <input required type="email" name="email" class="form-control w-50" id="em" placeholder="example@email.com">
-  </div>
-  <br>
-  <div class="form-group" id="reform">
-    <label for="pas">Password</label>
-    <input required name="password" type="password" class="form-control w-50" id="pas" placeholder="password">
-  </div>
-  <br>
-  <button type="submit" class="btn btn-outline-success">Register</button>
-</form>
-
-{% if error %}
-<div role="alert" class="alert alert-danger">
-  {% if error|length > 1 %}
+<!-- Display errors -->
+{% if errors %}
+<div role="alert" class="alert alert-danger" style="white-space: normal; word-break: break-word;">
     <ul>
-      {% for e in error %}
+        {% for e in errors %}
         <li>{{ e }}</li>
-      {% endfor %}
+        {% endfor %}
     </ul>
-  {% else %}
-    {{ error }}
-  {% endif %}
 </div>
 {% endif %}
 
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="usr">Username</label>
+        <input name="username" required type="text" class="form-control w-50" id="usr" placeholder="Username"
+               value="{{ username|default:'' }}">
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="em">Email</label>
+        <input required type="email" name="email" class="form-control w-50" id="em" placeholder="example@email.com"
+               value="{{ email|default:'' }}">
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="pas">Password</label>
+        <input required name="password" type="password" class="form-control w-50" id="pas" placeholder="Password">
+    </div>
+    <br>
+    <button type="submit" class="btn btn-outline-success">Register</button>
+</form>
 
 {% endblock %}

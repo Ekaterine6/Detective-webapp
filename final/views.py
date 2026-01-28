@@ -5,7 +5,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render, get_object_or_404
 from .models import Post, Profile, PostImg, Case, Comments, Notes
@@ -46,8 +46,9 @@ def register(request):
             errors.append("Password must be at least 6 characters long.")
 
         if errors:
+            # Send the full list of errors and pre-fill username/email
             return render(request, "register.html", {
-                "error": errors[0],  # you can show only the first error or loop through them in HTML
+                "errors": errors,
                 "username": username,
                 "email": email
             })
@@ -62,10 +63,41 @@ def register(request):
             text="You can create and add notes to this board, use it to brainstorm, or visualize your thoughts."
         )
 
-        login(request, user)
+        # Log in the user
+        auth_login(request, user)
         return redirect("index")
 
     return render(request, "register.html")
+
+
+
+
+def login_view(request):
+    if request.method == "POST":
+        identifier = request.POST.get("username", "").strip()  # could be username or email
+        password = request.POST.get("password", "").strip()
+
+        if not identifier or not password:
+            return render(request, "login.html", {"error": "Username/email and password are required."})
+
+        # Check if identifier is an email
+        if "@" in identifier:
+            try:
+                user_obj = User.objects.get(email=identifier)
+                username = user_obj.username
+            except User.DoesNotExist:
+                return render(request, "login.html", {"error": "Invalid email or password."})
+        else:
+            username = identifier
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return redirect("index")
+        else:
+            return render(request, "login.html", {"error": "Invalid username/email or password."})
+
+    return render(request, "login.html")
 
 
 

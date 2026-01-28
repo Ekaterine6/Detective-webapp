@@ -6,14 +6,13 @@ from django.conf import settings
 # user profiles
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    pro_pic = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
     bio = models.TextField(blank=True)
     create_time = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.user.username
-    
 
+    
 # posts/news
 class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
