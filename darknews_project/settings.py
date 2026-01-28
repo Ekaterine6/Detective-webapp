@@ -1,5 +1,5 @@
 """
-Django settings for darknews_project project.
+Django settings for darknews_project project (Render-ready, production safe)
 """
 
 from pathlib import Path
@@ -10,7 +10,6 @@ import os
 # -------------------------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # -------------------------------------------------
 # SECURITY
 # -------------------------------------------------
@@ -19,15 +18,20 @@ SECRET_KEY = os.environ.get(
     "9#16o&evme2rc&*6vd3xd^o!rpu#-w_r1j%yd#z9-@ggq8k3ga"
 )
 
+# DEBUG should always be False in production
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = [
-    "caseboard.online",
-    "www.caseboard.online",
-    "localhost",
-    "127.0.0.1",
-]
+# Hosts allowed to serve your site
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "detective-webapp.onrender.com,.onrender.com,localhost,127.0.0.1"
+).split(",")
 
+# CSRF Trusted Origins (important for Django 4+)
+CSRF_TRUSTED_ORIGINS = [
+    "https://detective-webapp.onrender.com",
+    "http://detective-webapp.onrender.com",
+]
 
 # -------------------------------------------------
 # APPLICATIONS
@@ -43,11 +47,10 @@ INSTALLED_APPS = [
     "cloudinary",
     "cloudinary_storage",
 
-    "final",
+    "final",  # your main app
 
     "django.contrib.humanize",
 ]
-
 
 # -------------------------------------------------
 # MIDDLEWARE
@@ -64,13 +67,11 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-
 # -------------------------------------------------
 # URLS / WSGI
 # -------------------------------------------------
 ROOT_URLCONF = "darknews_project.urls"
 WSGI_APPLICATION = "darknews_project.wsgi.application"
-
 
 # -------------------------------------------------
 # TEMPLATES
@@ -91,10 +92,10 @@ TEMPLATES = [
     },
 ]
 
-
 # -------------------------------------------------
 # DATABASE
 # -------------------------------------------------
+# Default: SQLite (good for Render, simple apps)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -102,6 +103,11 @@ DATABASES = {
     }
 }
 
+# Optional: Postgres on Render (uncomment if using Postgres)
+# import dj_database_url
+# DATABASES = {
+#     "default": dj_database_url.config(default=os.environ.get("DATABASE_URL"))
+# }
 
 # -------------------------------------------------
 # PASSWORD VALIDATION
@@ -113,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-
 # -------------------------------------------------
 # INTERNATIONALIZATION
 # -------------------------------------------------
@@ -122,28 +127,21 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-
 # -------------------------------------------------
 # STATIC FILES (CSS / JS)
 # -------------------------------------------------
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# IMPORTANT:
-# Your CSS is inside final/static/styles.css
-# Django will auto-detect it because AppDirectoriesFinder is ON
+# Use WhiteNoise to serve static files on Render
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
 
 # -------------------------------------------------
 # MEDIA FILES (CLOUDINARY)
 # -------------------------------------------------
 DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
-# USE ONLY CLOUDINARY_URL (DO NOT DUPLICATE KEYS)
-# Render + local .env must have:
-# CLOUDINARY_URL=cloudinary://API_KEY:API_SECRET@dai4fmwr2
-
+# Make sure you set CLOUDINARY_URL in Render Environment
+# Format: cloudinary://API_KEY:API_SECRET@CLOUD_NAME
 
 # -------------------------------------------------
 # AUTH REDIRECTS
@@ -152,8 +150,24 @@ LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/login/"
 
-
 # -------------------------------------------------
 # DEFAULT PRIMARY KEY
 # -------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# -------------------------------------------------
+# OPTIONAL: Security for production
+# -------------------------------------------------
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+X_FRAME_OPTIONS = "DENY"
+
+# -------------------------------------------------
+# Optional: Email backend for production
+# -------------------------------------------------
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "smtp.example.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
