@@ -21,17 +21,22 @@ SECRET_KEY = os.environ.get(
 # DEBUG should always be False in production
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-# Hosts allowed to serve your site
-ALLOWED_HOSTS = os.environ.get(
-    "ALLOWED_HOSTS",
-    "detective-webapp.onrender.com,.onrender.com,localhost,127.0.0.1"
-).split(",")
 
-# CSRF Trusted Origins (important for Django 4+)
-CSRF_TRUSTED_ORIGINS = [
-    "https://detective-webapp.onrender.com",
-    "http://detective-webapp.onrender.com",
+ALLOWED_HOSTS = [
+    "caseboard.online",
+    "www.caseboard.online",
+    "detective-webapp.onrender.com",
+    ".onrender.com",
+    "localhost",
+    "127.0.0.1",
 ]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://caseboard.online",
+    "https://www.caseboard.online",
+    "https://detective-webapp.onrender.com",
+]
+
 
 # -------------------------------------------------
 # APPLICATIONS
