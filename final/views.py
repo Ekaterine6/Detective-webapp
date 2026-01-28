@@ -1,6 +1,8 @@
 from django.db.models import Count, Q
 from django.contrib.auth import logout
 from django.views.decorators.http import require_POST
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import login
@@ -10,38 +12,61 @@ from .models import Post, Profile, PostImg, Case, Comments, Notes
 import json
 
 
-# register
-def register(request):
-    #registration form
-    if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-        password = request.POST["password"]
- 
-        # no repeating of usernames
-        if User.objects.filter(username=username).exists():
-            return render(request, "register.html", {
-                "error": "username already exists"
-            })
-        
-        # creating the user
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password
-        )
 
-        # note the new user sees in board only once 
+def register(request):
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        errors = []
+
+        # Username validation
+        if not username:
+            errors.append("Username is required.")
+        elif User.objects.filter(username=username).exists():
+            errors.append("Username already exists.")
+
+        # Email validation
+        if not email:
+            errors.append("Email is required.")
+        else:
+            try:
+                validate_email(email)
+            except ValidationError:
+                errors.append("Enter a valid email address.")
+            else:
+                if User.objects.filter(email=email).exists():
+                    errors.append("Email is already registered.")
+
+        # Password validation
+        if not password:
+            errors.append("Password is required.")
+        elif len(password) < 6:
+            errors.append("Password must be at least 6 characters long.")
+
+        if errors:
+            return render(request, "register.html", {
+                "error": errors[0],  # you can show only the first error or loop through them in HTML
+                "username": username,
+                "email": email
+            })
+
+        # Create the user
+        user = User.objects.create_user(username=username, email=email, password=password)
+
+        # Add a default note for the new user
         Notes.objects.create(
             user=user,
             title="Example Note - Hi Detective",
-            text="You can create and add notes to this board,use it to brainstorm, or maybe u just want to visualize your thoughts."
+            text="You can create and add notes to this board, use it to brainstorm, or visualize your thoughts."
         )
 
         login(request, user)
         return redirect("index")
-    
+
     return render(request, "register.html")
+
 
 
 # delete accout logic
