@@ -31,11 +31,15 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
 ]
 
+
 CSRF_TRUSTED_ORIGINS = [
+    "http://caseboard.online",
+    "http://www.caseboard.online",
     "https://caseboard.online",
     "https://www.caseboard.online",
     "https://detective-webapp.onrender.com",
 ]
+
 
 
 # -------------------------------------------------

@@ -25,7 +25,7 @@
         <p class="card-text text-truncate" style="max-height:3em;">{{ post.body }}</p>
       </div>
       <div class="card-footer">
-        <small class="text-muted">By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'country' post.country %}">{{ post.country }}</a></small>
+        <small>By <a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a> in <a href="{% url 'country' post.country %}">{{ post.country }}</a></small>
         <br>
         <a href="{% url 'view_post' post.id %}" class="btn btn-outline-success btn-sm mt-2">Read More</a>
       </div>
