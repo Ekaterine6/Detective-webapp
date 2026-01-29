@@ -120,13 +120,11 @@ def delete_account(request):
 
 
 def index(request):
-    # search br 
     query = request.GET.get("q", "").strip()
 
-    # posts display
     posts = Post.objects.all().order_by("-create_time")
+    users = User.objects.none()
 
-    # search bar logic - using Q making sure it is case insensetive
     if query:
         posts = posts.filter(
             Q(title__icontains=query) |
@@ -136,11 +134,17 @@ def index(request):
             Q(city__icontains=query)
         )
 
+        # 👇 ADD THIS (user search)
+        users = User.objects.filter(username__icontains=query)
 
     return render(request, "index.html", {
         "posts": posts,
-        "query" : query 
+        "users": users,
+        "query": query
     })
+
+
+
 
 
 @login_required

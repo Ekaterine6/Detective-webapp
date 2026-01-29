@@ -3,13 +3,21 @@
 {% block body %}
 
 <!--search bar-->
-{% if query  %}
-<br>
-<div class="alert alert-primary" role="alert">
-  <strong>results for "{{ query }}"</strong> 
-</div>
-<br>
+{% if query and users %}
+  <div class="container mt-3">
+    <h5>Profiles</h5>
+    <ul class="list-group mb-4">
+      {% for user in users %}
+        <li class="list-group-item">
+          <a href="{% url 'profile' user.username %}">
+            {{ user.username }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 {% endif %}
+
 
 <h1 class="gl_h1">country data</h1>
 
